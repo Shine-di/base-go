@@ -4,4 +4,12 @@ package main
 
 func main() {
 
+
+
+
+
+	//删除  idea命令
+	// git rm --cached -r .idea
+	// git rm -r --cached .
+
 }
