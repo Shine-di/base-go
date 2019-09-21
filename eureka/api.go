@@ -24,6 +24,7 @@ func Register(zone, app string, instance *Instance) error {
 
 	url := zone + "apps/" + app
 
+
 	// status: http.StatusNoContent
 	result := request.Post(url).Json(info).Send().Status2xx()
 	if result.Err != nil {
