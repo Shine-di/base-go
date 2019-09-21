@@ -1,6 +1,6 @@
 //@author D-S
 //Created on 2019/9/21 9:53 上午
-package request
+package eureka
 
 import (
 	"bytes"
@@ -38,8 +38,8 @@ var defaultRequestInterceptorChain = &requestInterceptorChain{
 	interceptors: make([]RequestInterceptor, 0),
 }
 
-// Client 封装了http的参数等信息
-type Client struct {
+// Client2 封装了http的参数等信息
+type Client2 struct {
 	// 自定义Client
 	client *http.Client
 
@@ -66,33 +66,33 @@ type Result struct {
 }
 
 // Get http `GET` 请求
-func Get(url string) *Client {
+func Get(url string) *Client2 {
 	return newClient(url, http.MethodGet, nil)
 }
 
 // Post http `POST` 请求
-func Post(url string) *Client {
+func Post(url string) *Client2 {
 	return newClient(url, http.MethodPost, nil)
 }
 
 // Put http `PUT` 请求
-func Put(url string) *Client {
+func Put(url string) *Client2 {
 	return newClient(url, http.MethodPut, nil)
 }
 
 // Delete http `DELETE` 请求
-func Delete(url string) *Client {
+func Delete(url string) *Client2 {
 	return newClient(url, http.MethodDelete, nil)
 }
 
 // Request 用于自定义请求方式，比如`HEAD`、`PATCH`、`OPTIONS`、`TRACE`
 // client参数用于替换DefaultClient，如果为nil则会使用默认的
-func Request(url, method string, client *http.Client) *Client {
+func Request(url, method string, client *http.Client) *Client2 {
 	return newClient(url, method, client)
 }
 
 // Params http请求中url参数
-func (c *Client) Params(params url.Values) *Client {
+func (c *Client2) Params(params url.Values) *Client2 {
 	for k, v := range params {
 		c.params[k] = v
 	}
@@ -100,13 +100,13 @@ func (c *Client) Params(params url.Values) *Client {
 }
 
 // Header http请求头
-func (c *Client) Header(k, v string) *Client {
+func (c *Client2) Header(k, v string) *Client2 {
 	c.header.Set(k, v)
 	return c
 }
 
 // Headers http请求头
-func (c *Client) Headers(header http.Header) *Client {
+func (c *Client2) Headers(header http.Header) *Client2 {
 	for k, v := range header {
 		c.header[k] = v
 	}
@@ -114,7 +114,7 @@ func (c *Client) Headers(header http.Header) *Client {
 }
 
 // Form 表单提交参数
-func (c *Client) Form(form url.Values) *Client {
+func (c *Client2) Form(form url.Values) *Client2 {
 	c.header.Set(ContentType, ApplicationFormUrlencoded)
 	c.form = form
 	return c
@@ -122,20 +122,20 @@ func (c *Client) Form(form url.Values) *Client {
 
 // Json json提交参数
 // 如果是string，则默认当作是json字符串；否则会序列化为json字节数组，再发送
-func (c *Client) Json(json interface{}) *Client {
+func (c *Client2) Json(json interface{}) *Client2 {
 	c.header.Set(ContentType, ApplicationJSON)
 	c.json = json
 	return c
 }
 
 // Multipart form-data提交参数
-func (c *Client) Multipart(multipart FileForm) *Client {
+func (c *Client2) Multipart(multipart FileForm) *Client2 {
 	c.multipart = multipart
 	return c
 }
 
 // Send 发送http请求
-func (c *Client) Send() *Result {
+func (c *Client2) Send() *Result {
 	var result *Result
 
 	// 处理query string
@@ -166,7 +166,7 @@ func (c *Client) Send() *Result {
 }
 
 // createMultipartForm 创建form-data的请求
-func (c *Client) createMultipartForm() *Result {
+func (c *Client2) createMultipartForm() *Result {
 	var result = new(Result)
 
 	body := &bytes.Buffer{}
@@ -221,7 +221,7 @@ func (c *Client) createMultipartForm() *Result {
 }
 
 // createForm 创建application/json请求
-func (c *Client) createJson() *Result {
+func (c *Client2) createJson() *Result {
 	var result = new(Result)
 
 	b, err := json.Marshal(c.json)
@@ -242,7 +242,7 @@ func (c *Client) createJson() *Result {
 }
 
 // createForm 创建application/x-www-form-urlencoded请求
-func (c *Client) createForm() *Result {
+func (c *Client2) createForm() *Result {
 	var result = new(Result)
 
 	form := c.form.Encode()
@@ -259,7 +259,7 @@ func (c *Client) createForm() *Result {
 }
 
 // createEmptyBody 没有内容的body
-func (c *Client) createEmptyBody() *Result {
+func (c *Client2) createEmptyBody() *Result {
 	var result = new(Result)
 
 	req, err := http.NewRequest(c.method, c.url, nil)
@@ -274,7 +274,7 @@ func (c *Client) createEmptyBody() *Result {
 }
 
 // doSend 发送请求
-func (c *Client) doSend(req *http.Request, result *Result) {
+func (c *Client2) doSend(req *http.Request, result *Result) {
 	// 调用拦截器，遇到错误就退出
 	if err := c.beforeSend(req); err != nil {
 		result.Err = err
@@ -286,7 +286,7 @@ func (c *Client) doSend(req *http.Request, result *Result) {
 }
 
 // beforeSend 发送请求前，调用拦截器
-func (c *Client) beforeSend(req *http.Request) error {
+func (c *Client2) beforeSend(req *http.Request) error {
 	mutex := defaultRequestInterceptorChain.mutex
 	mutex.RLock()
 	defer mutex.RUnlock()
@@ -389,12 +389,12 @@ func (r *Result) Save(name string) error {
 }
 
 // newClient 创建Client
-func newClient(u string, method string, client *http.Client) *Client {
+func newClient(u string, method string, client *http.Client) *Client2 {
 	// client为nil则使用默认的DefaultClient
 	if client == nil {
 		client = http.DefaultClient
 	}
-	return &Client{
+	return &Client2{
 		client: client,
 		url:    u,
 		method: method,

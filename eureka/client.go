@@ -3,7 +3,6 @@
 package eureka
 
 import (
-	"base-go/util/net"
 	"log"
 	"os"
 	"os/signal"
@@ -13,7 +12,7 @@ import (
 	"time"
 )
 
-// Client eureka客户端
+// Client2 eureka客户端
 type Client struct {
 	// for monitor system signal
 	signalChan chan os.Signal
@@ -137,7 +136,7 @@ func (c *Client) handleSignal() {
 // NewClient 创建客户端
 func NewClient(config *Config) *Client {
 	defaultConfig(config)
-	config.instance = NewInstance(net.GetLocalIP(), config)
+	config.instance = NewInstance(GetLocalIP(), config)
 	return &Client{Config: config}
 }
 
