@@ -3,12 +3,11 @@
 package main
 
 import (
-	eureka_client "base-go/eureka-client"
+	eureka_client "base-go/eureka"
 	"encoding/json"
 	"fmt"
 	"net/http"
 )
-
 func main() {
 
 
