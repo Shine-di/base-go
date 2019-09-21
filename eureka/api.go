@@ -21,7 +21,7 @@ func Register(zone, app string, instance *Instance) error {
 		Instance: instance,
 	}
 
-	url := zone + "/apps/" + app
+	url := zone + "apps/" + app
 
 
 	// status: http.StatusNoContent
