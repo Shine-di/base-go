@@ -3,6 +3,7 @@
 package eureka
 
 import (
+	"base-go/request"
 	"fmt"
 	"net/url"
 )
@@ -25,7 +26,7 @@ func Register(zone, app string, instance *Instance) error {
 
 
 	// status: http.StatusNoContent
-	result := Post(url).Json(info).Send().Status2xx()
+	result := request.Post(url).Json(info).Send().Status2xx()
 	if result.Err != nil {
 		return fmt.Errorf("Register application instance failed, error: %s", result.Err)
 	}
@@ -37,7 +38,7 @@ func Register(zone, app string, instance *Instance) error {
 func UnRegister(zone, app, instanceID string) error {
 	url := zone + "apps/" + app + "/" + instanceID
 	// status: http.StatusNoContent
-	result := Delete(url).Send().StatusOk()
+	result := request.Delete(url).Send().StatusOk()
 	if result.Err != nil {
 		return fmt.Errorf("UnRegister application instance failed, error: %s", result.Err)
 	}
@@ -55,7 +56,7 @@ func Refresh(zone string) (*Applications, error) {
 		Applications: apps,
 	}
 	url := zone + "apps"
-	err := Get(url).Header("Accept", " application/json").Send().StatusOk().Json(res)
+	err := request.Get(url).Header("Accept", " application/json").Send().StatusOk().Json(res)
 	if err != nil {
 		return nil, fmt.Errorf("Refresh failed, error: %s", err)
 	}
@@ -69,7 +70,7 @@ func Heartbeat(zone, app, instanceID string) error {
 	params := url.Values{
 		"status": {"UP"},
 	}
-	result := Put(u).Params(params).Send().StatusOk()
+	result := request.Put(u).Params(params).Send().StatusOk()
 	if result.Err != nil {
 		return fmt.Errorf("Heartbeat failed, error: %s", result.Err)
 	}
