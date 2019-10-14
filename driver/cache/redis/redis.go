@@ -4,6 +4,7 @@ import (
 	"cortex3/conf"
 	"fmt"
 	"github.com/go-redis/redis"
+	"github.com/qianlnk/log"
 )
 
 var client *redis.Client
@@ -26,4 +27,27 @@ func Redis() *redis.Client {
 		InitRedis()
 	}
 	return client
+}
+
+
+func Set(key string, value string) {
+	//client := Redis()
+	//defer client.Close()
+
+	Redis().Set(key, value, 0)
+}
+
+func Get(key string) (string, error) {
+	//client := Redis()
+	//defer client.Close()
+	log.Info(key)
+	log.Info(Redis())
+	return Redis().Get(key).Result()
+}
+
+func Del(key string) {
+	//client := Redis()
+	//defer client.Close()
+
+	Redis().Del(key)
 }

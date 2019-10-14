@@ -1,6 +1,6 @@
 //@author D-S
 //Created on 2019/9/21 9:53 上午
-package request
+package eureka
 
 import (
 	"bytes"
